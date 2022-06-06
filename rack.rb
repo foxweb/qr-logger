@@ -1,4 +1,5 @@
-require 'rack/app'
+require 'rack'
+require 'rack/server'
 require 'sequel'
 
 DB = Sequel.connect(adapter: 'postgres', database: 'analytics')
@@ -10,19 +11,15 @@ DB.create_table :hits do
   Time :created_at, null: false
 end unless DB.table_exists?(:hits)
 
-class App < Rack::App
-  desc 'healthcheck endpoint'
-  get '/' do
-    'OK'
-  end
-
-  get '/youtube' do
+class HitLogApp
+  def self.call(env)
     ::DB[:hits].insert(
-      ip: request.env['REMOTE_ADDR'],
-      user_agent: request.env['HTTP_USER_AGENT'],
+      ip: env['REMOTE_ADDR'],
+      user_agent: env['HTTP_USER_AGENT'],
       created_at: Time.now
     )
-    redirect_to 'https://www.youtube.com/channel/UCo4vIc1zKDHSioObftBYixg'
+    [200, {'Content-Type' => 'text/plain'}, [env['HTTP_USER_AGENT']]]
+    #[302, {'Location': 'https://www.youtube.com/channel/UCo4vIc1zKDHSioObftBYixg'}, []]
   end
 end
 

@@ -1,3 +1,3 @@
-require './app.rb'
-run App
+require './rack.rb'
+Rack::Server.start(app: HitLogApp)
 
