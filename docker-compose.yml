@@ -1,0 +1,28 @@
+version: '3.8'
+
+volumes:
+  pgdata:
+
+services:
+  app:
+    tty: true
+    build: .
+    stdin_open: true
+    command: bundle exec rackup --host 0.0.0.0 -p 9292
+    ports:
+      - 9292:9292
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    stop_grace_period: 3s
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-qrlogger}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-qrlogger}
+      POSTGRES_DB: ${DB_DATABASE:-analytics}

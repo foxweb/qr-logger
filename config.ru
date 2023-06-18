@@ -1,15 +1,19 @@
+# frozen_string_literal: true
+
 require 'rack'
 require 'rack/server'
 require 'sequel'
 
-DB = Sequel.connect(adapter: 'postgres', database: 'analytics')
+DB = Sequel.connect('postgres://qrlogger:qrlogger@db/analytics')
 
-DB.create_table :hits do
-  primary_key :id
-  Inet :ip, null: false
-  String :user_agent, null: false
-  Time :created_at, null: false
-end unless DB.table_exists?(:hits)
+unless DB.table_exists?(:hits)
+  DB.create_table :hits do
+    primary_key :id
+    Inet :ip, null: false
+    String :user_agent, null: false
+    Time :created_at, null: false
+  end
+end
 
 class HitLogApp
   def self.call(env)
@@ -19,10 +23,9 @@ class HitLogApp
       created_at: Time.now
     )
     # for testing
-    #[200, {'Content-Type' => 'text/plain'}, [env['HTTP_USER_AGENT']]]
-    [302, {'Location' => 'https://www.youtube.com/channel/UCo4vIc1zKDHSioObftBYixg'}, []]
+    # [200, {'Content-Type' => 'text/plain'}, [env['HTTP_USER_AGENT']]]
+    [302, { 'Location' => 'https://www.youtube.com/channel/UCo4vIc1zKDHSioObftBYixg' }, []]
   end
 end
 
 Rack::Server.start(app: HitLogApp)
-

@@ -11,7 +11,9 @@ GEM
     sequel (5.55.0)
 
 PLATFORMS
+  aarch64-linux
   arm64-darwin-21
+  arm64-darwin-22
 
 DEPENDENCIES
   pg
