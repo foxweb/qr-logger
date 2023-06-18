@@ -18,7 +18,7 @@ end
 class HitLogApp
   def self.call(env)
     ::DB[:hits].insert(
-      ip: env['REMOTE_ADDR'],
+      ip: env['HTTP_X_REAL_IP'] || env['REMOTE_ADDR'],
       user_agent: env['HTTP_USER_AGENT'],
       created_at: Time.now
     )
