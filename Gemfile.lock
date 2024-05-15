@@ -1,19 +1,25 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    nio4r (2.5.8)
-    pg (1.3.5)
-    puma (5.6.4)
+    bigdecimal (3.1.8)
+    nio4r (2.7.3)
+    pg (1.5.6)
+    puma (6.4.2)
       nio4r (~> 2.0)
-    rack (2.2.3.1)
-    rack-app (7.7.0)
-      rack
-    sequel (5.55.0)
+    rack (3.0.11)
+    rack-app (11.0.2)
+      rack (>= 3.0.0)
+      rackup
+    rackup (2.1.0)
+      rack (>= 3)
+      webrick (~> 1.8)
+    sequel (5.80.0)
+      bigdecimal
+    webrick (1.8.1)
 
 PLATFORMS
-  aarch64-linux
-  arm64-darwin-21
-  arm64-darwin-22
+  arm64-darwin-23
+  ruby
 
 DEPENDENCIES
   pg
@@ -22,4 +28,4 @@ DEPENDENCIES
   sequel
 
 BUNDLED WITH
-   2.3.12
+   2.5.9
