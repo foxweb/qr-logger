@@ -1,5 +1,6 @@
 volumes:
   pgdata:
+  bundle_path:
 
 services:
   app:
@@ -11,6 +12,9 @@ services:
       - 9292:9292
     volumes:
       - .:/app
+      - bundle_path:/bundle
+    environment:
+      - BUNDLE_PATH=/bundle/vendor
     depends_on:
       - db
 
