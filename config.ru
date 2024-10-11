@@ -12,6 +12,7 @@ unless DB.table_exists?(:hits)
     Inet :ip, null: false
     String :user_agent, null: false
     String :referer, null: false
+    String :host, null: false
     Time :created_at, null: false
   end
 end
@@ -21,7 +22,8 @@ class HitLogApp
     ::DB[:hits].insert(
       ip: env['HTTP_X_REAL_IP'] || env['REMOTE_ADDR'],
       user_agent: env['HTTP_USER_AGENT'],
-      referer: env['HTTP_REFERER'],
+      referer: env['HTTP_REFERER'] || '',
+      host: env['HTTP_HOST'],
       created_at: Time.now
     )
     # for testing
