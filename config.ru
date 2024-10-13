@@ -20,7 +20,7 @@ end
 
 class HitLogApp
   def self.call(env)
-    return [444] unless HOSTNAMES.include?(env['HTTP_HOST'])
+    return [444, {}, []] unless HOSTNAMES.include?(env['HTTP_HOST'])
 
     ::DB[:hits].insert(
       ip: env['HTTP_X_REAL_IP'] || env['REMOTE_ADDR'],
