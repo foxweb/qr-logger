@@ -31,7 +31,7 @@ class HitLogApp
     )
     # for testing
     # [200, {'Content-Type' => 'text/plain'}, [env['HTTP_USER_AGENT']]]
-    [302, { 'Location' => 'https://www.youtube.com/@foxwwweb/videos' }, []]
+    [302, { 'Location' => 'https://t.me/radiofoxweb' }, []]
   end
 end
 
