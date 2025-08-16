@@ -9,3 +9,9 @@ bundle
 rackup
 ```
 
+## Docker start
+
+```sh
+docker build
+docker compose up
+```

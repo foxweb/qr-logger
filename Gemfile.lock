@@ -1,31 +1,68 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    bigdecimal (3.1.8)
-    nio4r (2.7.3)
-    pg (1.5.6)
-    puma (6.4.2)
+    ast (2.4.3)
+    bigdecimal (3.2.2)
+    json (2.13.2)
+    language_server-protocol (3.17.0.5)
+    lint_roller (1.1.0)
+    nio4r (2.7.4)
+    parallel (1.27.0)
+    parser (3.3.9.0)
+      ast (~> 2.4.1)
+      racc
+    pg (1.6.1)
+    pg (1.6.1-aarch64-linux)
+    pg (1.6.1-aarch64-linux-musl)
+    pg (1.6.1-arm64-darwin)
+    pg (1.6.1-x86_64-darwin)
+    pg (1.6.1-x86_64-linux)
+    pg (1.6.1-x86_64-linux-musl)
+    prism (1.4.0)
+    puma (6.6.1)
       nio4r (~> 2.0)
-    rack (3.0.11)
-    rack-app (11.0.2)
-      rack (>= 3.0.0)
-      rackup
-    rackup (2.1.0)
+    racc (1.8.1)
+    rack (3.2.0)
+    rackup (2.2.1)
       rack (>= 3)
-      webrick (~> 1.8)
-    sequel (5.80.0)
+    rainbow (3.1.1)
+    regexp_parser (2.11.1)
+    rubocop (1.79.2)
+      json (~> 2.3)
+      language_server-protocol (~> 3.17.0.2)
+      lint_roller (~> 1.1.0)
+      parallel (~> 1.10)
+      parser (>= 3.3.0.2)
+      rainbow (>= 2.2.2, < 4.0)
+      regexp_parser (>= 2.9.3, < 3.0)
+      rubocop-ast (>= 1.46.0, < 2.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (>= 2.4.0, < 4.0)
+    rubocop-ast (1.46.0)
+      parser (>= 3.3.7.2)
+      prism (~> 1.4)
+    ruby-progressbar (1.13.0)
+    sequel (5.95.1)
       bigdecimal
-    webrick (1.8.1)
+    unicode-display_width (3.1.4)
+      unicode-emoji (~> 4.0, >= 4.0.4)
+    unicode-emoji (4.0.4)
 
 PLATFORMS
-  arm64-darwin-23
-  ruby
+  aarch64-linux
+  aarch64-linux-musl
+  arm64-darwin
+  x86_64-darwin
+  x86_64-linux
+  x86_64-linux-musl
 
 DEPENDENCIES
   pg
   puma
-  rack-app
+  rack (~> 3.2)
+  rackup
+  rubocop
   sequel
 
 BUNDLED WITH
-   2.5.9
+   2.7.1

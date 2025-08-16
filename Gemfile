@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 
-gem 'rack-app', require: 'rack/app'
+gem 'rack', '~> 3.2'
+gem 'rackup'
 gem 'sequel'
 gem 'pg'
 gem 'puma'
+gem 'rubocop'
