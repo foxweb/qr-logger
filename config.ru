@@ -26,7 +26,7 @@ class HitLogApp
     return [444, {}, []] unless HOSTNAMES.include?(env['HTTP_HOST'])
 
     case [env['REQUEST_METHOD'], env['PATH_INFO']]
-    when ['GET', '/y']
+    when ['GET', '/y'], ['GET', '/youtube']
       hit!(env)
     when ['GET', '/test']
       return [200, {}, [env['HTTP_USER_AGENT'], "\n", env['REMOTE_ADDR']]]
