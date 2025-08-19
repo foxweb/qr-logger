@@ -4,7 +4,7 @@ require 'rack'
 require 'sequel'
 
 use Rack::Static, urls: { '/' => '/index.html' }, root: 'public', index: 'index.html'
-use Rack::Static, urls: ['/images'], root: 'public', index: 'index.html'
+use Rack::Static, urls: ['/images', '/robots.txt', '/favicon.ico'], root: 'public', index: 'index.html'
 
 HOSTNAMES = ['kurepin.com', 'k5r.ru'].freeze
 REDIRECT_TO = 'https://k5r.ru/'
