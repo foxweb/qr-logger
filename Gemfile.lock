@@ -3,7 +3,6 @@ GEM
   specs:
     bigdecimal (3.2.2)
     nio4r (2.7.4)
-    pg (1.6.1)
     pg (1.6.1-aarch64-linux)
     pg (1.6.1-aarch64-linux-musl)
     pg (1.6.1-arm64-darwin)
@@ -22,7 +21,6 @@ PLATFORMS
   aarch64-linux
   aarch64-linux-musl
   arm64-darwin
-  ruby
   x86_64-darwin
   x86_64-linux
   x86_64-linux-musl
