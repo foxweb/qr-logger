@@ -1,6 +1,5 @@
 volumes:
   pgdata:
-  bundle_path:
 
 services:
   app:
@@ -12,9 +11,7 @@ services:
       - 9292:9292
     volumes:
       - .:/app
-      - bundle_path:/bundle
     environment:
-      - BUNDLE_PATH=/bundle/vendor
       - DATABASE_URL=postgres://${DB_USERNAME:-qrlogger}:${DB_PASSWORD:-qrlogger}@db:5432/${DB_DATABASE:-analytics}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS:-kurepin.com,k5r.ru,58region.ru,localhost}
       - REDIRECT_URL=${REDIRECT_URL:-https://k5r.ru/}
