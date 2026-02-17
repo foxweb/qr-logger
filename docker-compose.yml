@@ -15,11 +15,22 @@ services:
       - bundle_path:/bundle
     environment:
       - BUNDLE_PATH=/bundle/vendor
+      - DATABASE_URL=postgres://${DB_USERNAME:-qrlogger}:${DB_PASSWORD:-qrlogger}@db:5432/${DB_DATABASE:-analytics}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-kurepin.com,k5r.ru,58region.ru,localhost}
+      - REDIRECT_URL=${REDIRECT_URL:-https://k5r.ru/}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9292/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   db:
-    image: postgres:15
+    image: postgres:17
     restart: unless-stopped
     stop_grace_period: 3s
     volumes:
@@ -28,3 +39,9 @@ services:
       POSTGRES_USER: ${DB_USERNAME:-qrlogger}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-qrlogger}
       POSTGRES_DB: ${DB_DATABASE:-analytics}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-qrlogger} -d ${DB_DATABASE:-analytics}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

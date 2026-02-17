@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'bundler/setup'
+require 'irb'
+
+# Load the application
+APP_ROOT = File.expand_path('..', __dir__)
+Dir.chdir(APP_ROOT)
+
+puts '== Loading QR Logger Console =='
+
+# Load .env if available
+if File.exist?('.env')
+  require 'dotenv'
+  Dotenv.load
+  puts '✅ Loaded .env'
+else
+  puts '⚠️  No .env file found'
+end
+
+# Load gems
+require 'rack'
+require 'sequel'
+require 'logger'
+
+# Setup database connection
+DB_URL = ENV.fetch('DATABASE_URL', 'postgres://qrlogger:qrlogger@localhost:5432/analytics')
+puts "🔌 Connecting to database..."
+
+begin
+  DB = Sequel.connect(DB_URL)
+  DB.extension :pg_inet
+  puts "✅ Database connected"
+  
+  # Test connection
+  DB.test_connection
+  
+  # Show some stats
+  if DB.table_exists?(:hits)
+    total_hits = DB[:hits].count
+    puts "📊 Total hits in database: #{total_hits}"
+  else
+    puts "⚠️  Hits table doesn't exist yet"
+  end
+rescue Sequel::DatabaseConnectionError => e
+  puts "❌ Database connection failed: #{e.message}"
+  puts "   Continuing without database..."
+end
+
+puts "\n" + "=" * 50
+puts "Available objects:"
+puts "  DB     - Sequel database connection"
+puts "  ENV    - Environment variables"
+puts "\nExamples:"
+puts "  DB[:hits].count              # Count all hits"
+puts "  DB[:hits].order(:created_at.desc).limit(10).all  # Last 10 hits"
+puts "  DB[:hits].group(:host).count # Hits by host"
+puts "=" * 50 + "\n\n"
+
+IRB.start(__FILE__)

@@ -1,0 +1,63 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'fileutils'
+
+# Ensure we're in the project root
+APP_ROOT = File.expand_path('..', __dir__)
+Dir.chdir(APP_ROOT)
+
+def system!(*args)
+  system(*args) || abort("\n== Command #{args} failed ==")
+end
+
+puts '== Starting QR Logger Server =='
+
+# Check if .env exists
+unless File.exist?('.env')
+  puts "\n⚠️  Warning: .env file not found"
+  if File.exist?('.env.example')
+    print 'Would you like to copy .env.example to .env? (y/n): '
+    response = $stdin.gets.chomp.downcase
+    if response == 'y' || response == 'yes'
+      FileUtils.cp('.env.example', '.env')
+      puts '✅ Created .env from .env.example'
+      puts '⚠️  Please edit .env with your settings and run again'
+      exit 0
+    end
+  end
+  puts '⚠️  Continuing without .env file (using defaults)'
+  puts ''
+end
+
+# Check Ruby version
+ruby_version_file = File.read('.ruby-version').strip
+current_ruby = RUBY_VERSION
+if current_ruby != ruby_version_file
+  puts "\n⚠️  Warning: Ruby version mismatch!"
+  puts "   Expected: #{ruby_version_file}"
+  puts "   Current:  #{current_ruby}"
+  puts ''
+end
+
+# Install dependencies if needed
+unless File.exist?('Gemfile.lock')
+  puts "\n== Installing dependencies =="
+  system! 'bundle install'
+end
+
+# Default server configuration
+host = ENV.fetch('HOST', '0.0.0.0')
+port = ENV.fetch('PORT', '9292')
+
+puts "\n📡 Server configuration:"
+puts "   Host: #{host}"
+puts "   Port: #{port}"
+puts "   Environment: #{ENV.fetch('RACK_ENV', 'development')}"
+puts "\n🔗 Server will be available at: http://localhost:#{port}"
+puts "🏥 Health check: http://localhost:#{port}/health"
+puts "\n💡 Press Ctrl+C to stop the server"
+puts "\n" + "=" * 50 + "\n\n"
+
+# Start the server
+exec "bundle exec rackup --host #{host} --port #{port}"

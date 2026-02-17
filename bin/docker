@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# frozen_string_literal: true
+
+set -e
+
+APP_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$APP_ROOT"
+
+echo "== QR Logger Docker Manager =="
+echo ""
+
+# Check if .env exists
+if [ ! -f .env ]; then
+  echo "⚠️  Warning: .env file not found"
+  if [ -f .env.example ]; then
+    echo "Creating .env from .env.example..."
+    cp .env.example .env
+    echo "✅ Created .env"
+    echo "⚠️  Please review .env and update if needed"
+    echo ""
+  fi
+fi
+
+# Parse command
+COMMAND="${1:-up}"
+
+case "$COMMAND" in
+  up|start)
+    echo "🚀 Starting services with Docker Compose..."
+    docker compose up --build
+    ;;
+  down|stop)
+    echo "🛑 Stopping services..."
+    docker compose down
+    ;;
+  restart)
+    echo "🔄 Restarting services..."
+    docker compose down
+    docker compose up --build
+    ;;
+  logs)
+    echo "📋 Showing logs..."
+    docker compose logs -f "${2:-app}"
+    ;;
+  ps|status)
+    echo "📊 Service status:"
+    docker compose ps
+    ;;
+  build)
+    echo "🔨 Building images..."
+    docker compose build
+    ;;
+  clean)
+    echo "🧹 Cleaning up..."
+    docker compose down -v
+    echo "✅ Removed containers and volumes"
+    ;;
+  shell)
+    SERVICE="${2:-app}"
+    echo "🐚 Opening shell in $SERVICE..."
+    docker compose exec "$SERVICE" /bin/bash
+    ;;
+  db)
+    echo "🗄️  Connecting to database..."
+    docker compose exec db psql -U qrlogger -d analytics
+    ;;
+  health)
+    echo "🏥 Checking health..."
+    curl -s http://localhost:9292/health | json_pp 2>/dev/null || curl -s http://localhost:9292/health
+    ;;
+  help|*)
+    echo "Usage: bin/docker [command]"
+    echo ""
+    echo "Commands:"
+    echo "  up, start      - Start services (default)"
+    echo "  down, stop     - Stop services"
+    echo "  restart        - Restart services"
+    echo "  logs [service] - Show logs (default: app)"
+    echo "  ps, status     - Show service status"
+    echo "  build          - Build Docker images"
+    echo "  clean          - Remove containers and volumes"
+    echo "  shell [service]- Open shell in container (default: app)"
+    echo "  db             - Connect to PostgreSQL"
+    echo "  health         - Check application health"
+    echo "  help           - Show this help"
+    echo ""
+    echo "Examples:"
+    echo "  bin/docker up         # Start all services"
+    echo "  bin/docker logs app   # Show app logs"
+    echo "  bin/docker shell app  # Open shell in app container"
+    echo "  bin/docker db         # Connect to database"
+    ;;
+esac

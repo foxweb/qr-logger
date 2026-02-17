@@ -1,0 +1,82 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'fileutils'
+
+# Ensure we're in the project root
+APP_ROOT = File.expand_path('..', __dir__)
+Dir.chdir(APP_ROOT)
+
+def system!(*args)
+  system(*args) || abort("\n== Command #{args} failed ==")
+end
+
+puts '== Setting up QR Logger =='
+
+# Check Ruby version
+puts "\n📍 Checking Ruby version..."
+ruby_version_file = File.read('.ruby-version').strip
+current_ruby = RUBY_VERSION
+if current_ruby == ruby_version_file
+  puts "✅ Ruby #{current_ruby} (correct version)"
+else
+  puts "⚠️  Ruby version mismatch!"
+  puts "   Expected: #{ruby_version_file}"
+  puts "   Current:  #{current_ruby}"
+  puts "   Please install Ruby #{ruby_version_file} using rbenv or rvm"
+end
+
+# Create .env if it doesn't exist
+puts "\n📝 Checking environment configuration..."
+if File.exist?('.env')
+  puts "✅ .env file exists"
+else
+  if File.exist?('.env.example')
+    FileUtils.cp('.env.example', '.env')
+    puts "✅ Created .env from .env.example"
+    puts "⚠️  Please review and update .env with your settings"
+  else
+    puts "❌ No .env.example found!"
+  end
+end
+
+# Install dependencies
+puts "\n📦 Installing dependencies..."
+system! 'bundle check || bundle install'
+
+# Check database connection
+puts "\n🔌 Checking database connection..."
+require 'dotenv/load'
+require 'sequel'
+
+DB_URL = ENV.fetch('DATABASE_URL', 'postgres://qrlogger:qrlogger@localhost:5432/analytics')
+begin
+  db = Sequel.connect(DB_URL)
+  db.test_connection
+  puts "✅ Database connection successful"
+  
+  # Check if table exists
+  if db.table_exists?(:hits)
+    puts "✅ Hits table exists"
+  else
+    puts "⚠️  Hits table doesn't exist (will be created on first run)"
+  end
+  db.disconnect
+rescue Sequel::DatabaseConnectionError => e
+  puts "❌ Database connection failed: #{e.message}"
+  puts "   Make sure PostgreSQL is running and credentials are correct"
+  puts "   You can start PostgreSQL with Docker: docker compose up -d db"
+end
+
+puts "\n" + "=" * 50
+puts "✅ Setup complete!"
+puts "\nNext steps:"
+puts "  1. Review and update .env file with your settings"
+puts "  2. Start PostgreSQL: docker compose up -d db"
+puts "  3. Start the server: bin/server"
+puts "  4. Check health: curl http://localhost:9292/health"
+puts "\nUseful commands:"
+puts "  bin/server   - Start the application server"
+puts "  bin/console  - Open interactive console with database access"
+puts "  bin/docker   - Start with Docker Compose"
+puts "=" * 50
