@@ -12,7 +12,7 @@ require 'active_support/cache'
 
 # Middleware
 use Rack::Static, urls: { '/' => '/index.html' }, root: 'public', index: 'index.html'
-use Rack::Static, urls: ['/images', '/robots.txt', '/favicon.ico'], root: 'public', index: 'index.html'
+use Rack::Static, urls: ['/images', '/robots.txt', '/favicon.ico', '/admin.css'], root: 'public', index: 'index.html'
 
 # Rate limiting
 use Rack::Attack

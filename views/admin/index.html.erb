@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Logger Admin</title>
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📊 QR Logger Admin</h1>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Всего хитов</h3>
+        <div class="value"><%= stats[:total_hits] %></div>
+      </div>
+      <div class="stat-card">
+        <h3>Уникальных IP</h3>
+        <div class="value"><%= stats[:unique_ips] %></div>
+      </div>
+      <div class="stat-card">
+        <h3>Сегодня</h3>
+        <div class="value"><%= stats[:today_hits] %></div>
+      </div>
+      <div class="stat-card">
+        <h3>Хостов</h3>
+        <div class="value"><%= stats[:hosts_count] %></div>
+      </div>
+    </div>
+
+    <!-- System Info -->
+    <div class="system-info">
+      <h2>⚙️ Системная информация</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Версия приложения</label>
+          <div class="value">v<%= h.call(system_info[:version].to_s) %></div>
+        </div>
+        <div class="info-item">
+          <label>Ruby</label>
+          <div class="value"><%= h.call(system_info[:ruby_version].to_s) %></div>
+        </div>
+        <div class="info-item">
+          <label>Rack</label>
+          <div class="value"><%= h.call(system_info[:rack_version].to_s) %></div>
+        </div>
+        <div class="info-item">
+          <label>Окружение</label>
+          <div class="value"><%= h.call(system_info[:environment].to_s) %></div>
+        </div>
+        <div class="info-item">
+          <label>База данных</label>
+          <div class="value <%= system_info[:database_status] == 'connected' ? 'status-ok' : 'status-error' %>"><%= h.call(system_info[:database_status].to_s) %></div>
+        </div>
+        <div class="info-item">
+          <label>Время работы</label>
+          <div class="value"><%= h.call(system_info[:uptime].to_s) %></div>
+        </div>
+        <div class="info-item">
+          <label>Память (RSS)</label>
+          <div class="value">
+            <% if system_info[:memory_usage].is_a?(Numeric) %>
+              <%= ((system_info[:memory_usage] / 1024.0).round(1)).to_s %> MB
+            <% else %>
+              <%= h.call(system_info[:memory_usage].to_s) %>
+            <% end %>
+          </div>
+        </div>
+        <div class="info-item">
+          <label>ОС</label>
+          <div class="value"><%= h.call(system_info[:os_version].to_s) %></div>
+        </div>
+        <div class="info-item">
+          <label>PostgreSQL</label>
+          <div class="value"><%= h.call(system_info[:postgresql_version].to_s) %></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <form method="GET">
+        <div class="filter-group">
+          <label>IP адрес</label>
+          <input type="text" name="ip" value="<%= h.call((ip_filter || '').to_s) %>" placeholder="Поиск по IP...">
+        </div>
+        <div class="filter-group">
+          <label>Хост</label>
+          <select name="host">
+            <option value="">Все хосты</option>
+            <% hosts.each do |host| %>
+              <option value="<%= h.call(host.to_s) %>" <%= host == host_filter ? 'selected' : '' %>><%= h.call(host.to_s) %></option>
+            <% end %>
+          </select>
+        </div>
+        <div class="filter-group">
+          <button type="submit">🔍 Фильтр</button>
+        </div>
+        <div class="filter-group">
+          <a href="/admin">Сбросить</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Hits Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>IP адрес</th>
+            <th>Хост</th>
+            <th>User Agent</th>
+            <th>Referer</th>
+            <th>Время</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if hits.empty? %>
+            <tr><td colspan="6" class="empty-state">Нет данных для отображения</td></tr>
+          <% else %>
+            <% hits.each do |hit| %>
+              <tr>
+                <td><%= hit[:id] %></td>
+                <td class="ip-cell"><%= h.call(hit[:ip].to_s) %></td>
+                <td><span class="host-badge"><%= h.call(hit[:host].to_s) %></span></td>
+                <td class="ua-cell" title="<%= h.call(hit[:user_agent].to_s) %>"><%= h.call(hit[:user_agent].to_s) %></td>
+                <td class="ua-cell"><%= hit[:referer].to_s.empty? ? '' : h.call(hit[:referer].to_s) %></td>
+                <td class="time-cell"><%= hit[:created_at].strftime('%d.%m.%Y %H:%M:%S') %></td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <% if total_pages > 1 %>
+      <div class="pagination">
+        <% if page > 1 %>
+          <a href="?page=<%= page - 1 %><%= ip_filter ? "&ip=#{u.call(ip_filter)}" : '' %><%= host_filter ? "&host=#{u.call(host_filter)}" : '' %>">← Назад</a>
+        <% else %>
+          <span class="disabled">← Назад</span>
+        <% end %>
+
+        <% (1..total_pages).each do |p| %>
+          <% next unless p == page || (p - page).abs <= 3 %>
+          <% if p == page %>
+            <span class="current"><%= p %></span>
+          <% else %>
+            <a href="?page=<%= p %><%= ip_filter ? "&ip=#{u.call(ip_filter)}" : '' %><%= host_filter ? "&host=#{u.call(host_filter)}" : '' %>"><%= p %></a>
+          <% end %>
+        <% end %>
+
+        <% if page < total_pages %>
+          <a href="?page=<%= page + 1 %><%= ip_filter ? "&ip=#{u.call(ip_filter)}" : '' %><%= host_filter ? "&host=#{u.call(host_filter)}" : '' %>">Далее →</a>
+        <% else %>
+          <span class="disabled">Далее →</span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="footer">
+      QR Logger v<%= h.call(version.to_s) %> • Powered by Ruby <%= h.call(ruby_version.to_s) %>
+    </div>
+  </div>
+</body>
+</html>

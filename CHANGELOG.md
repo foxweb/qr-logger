@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Version is stored in the `VERSION` file at the root of the project.
 
+## [2.2.1] - 2026-02-18
+
+### 🐛 Fixes
+
+- **Admin assets** - Fixed `/admin.css` being incorrectly handled by the admin route / middleware.
+- **Admin routing** - Prevented static file handling from shadowing `/admin` (could return `File not found: /admin`).
+
+### 🔧 Refactoring
+
+- **Admin templates** - Moved inline HTML/CSS out of `app/admin.rb` into:
+  - `views/admin/index.html.erb`
+  - `public/admin.css`
+- **Template rendering** - Cache/compile ERB template at startup instead of reading from disk per request.
+
+### 🔁 Changes
+
+- **Test endpoint** - `GET /test` now returns JSON (`application/json`) instead of plain text, including IP, headers and request info.
+
 ## [2.2.0] - 2026-02-18
 
 ### ✨ New Features

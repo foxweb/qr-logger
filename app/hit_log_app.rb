@@ -9,7 +9,7 @@ class HitLogApp
     return health_check if env['PATH_INFO'] == '/health'
 
     # Admin panel (before host validation for flexibility)
-    return Admin.call(env) if env['PATH_INFO'] =~ %r{^/admin}
+    return Admin.call(env) if env['PATH_INFO'] == '/admin' || env['PATH_INFO'].start_with?('/admin/')
 
     # Validate host
     unless HOSTNAMES.include?(env['HTTP_HOST'])
@@ -21,7 +21,7 @@ class HitLogApp
     when ['GET', '/y'], ['GET', '/youtube']
       hit!(env)
     when ['GET', '/test']
-      return [200, { 'content-type' => 'text/plain' }, [env['HTTP_USER_AGENT'], "\n", env['REMOTE_ADDR']]]
+      return test_json(env)
     end
     [302, { 'location' => REDIRECT_TO }, []]
   rescue StandardError => e
@@ -30,6 +30,27 @@ class HitLogApp
   end
 
   private
+
+  def test_json(env)
+    ip = request_ip(env)
+    body = {
+      ip: ip,
+      host: env['HTTP_HOST'],
+      method: env['REQUEST_METHOD'],
+      path: env['PATH_INFO'],
+      query: env['QUERY_STRING'],
+      user_agent: env['HTTP_USER_AGENT'],
+      referer: env['HTTP_REFERER']
+    }.to_json
+
+    [200, { 'content-type' => 'application/json; charset=utf-8' }, [body]]
+  end
+
+  def request_ip(env)
+    env['HTTP_X_REAL_IP'] ||
+      env['HTTP_X_FORWARDED_FOR']&.split(',')&.first&.strip ||
+      env['REMOTE_ADDR']
+  end
 
   def health_check
     result = Database.health_check
@@ -45,7 +66,7 @@ class HitLogApp
   end
 
   def hit!(env)
-    ip = env['HTTP_X_REAL_IP'] || env['HTTP_X_FORWARDED_FOR']&.split(',')&.first&.strip || env['REMOTE_ADDR']
+    ip = request_ip(env)
     user_agent = env['HTTP_USER_AGENT'] || 'Unknown'
     referer = env['HTTP_REFERER'] || ''
     host = env['HTTP_HOST']
