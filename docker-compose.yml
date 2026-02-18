@@ -12,10 +12,10 @@ services:
     volumes:
       - .:/app
     environment:
-      - DATABASE_URL=postgres://${DB_USERNAME:-qrlogger}:${DB_PASSWORD:-qrlogger}@db:5432/${DB_DATABASE:-analytics}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-kurepin.com,k5r.ru,58region.ru,localhost}
-      - REDIRECT_URL=${REDIRECT_URL:-https://k5r.ru/}
-      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - DATABASE_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - REDIRECT_URL=${REDIRECT_URL}
+      - LOG_LEVEL=${LOG_LEVEL}
     depends_on:
       db:
         condition: service_healthy
