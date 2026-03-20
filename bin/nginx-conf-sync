@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Synchronize remote nginx configuration (/etc/nginx) into ./.nginx.
+# Resulting structure is written directly under DEST_DIR, e.g.:
+#   ./.nginx/nginx.conf
+#   ./.nginx/sites-enabled/...
+
+HOST="${HOST:-rediron.ru}"
+DEST_DIR="${DEST_DIR:-./.nginx}"
+
+SSH_OPTS=(
+	-o BatchMode=yes
+	-o StrictHostKeyChecking=accept-new
+	-o ConnectTimeout=15
+)
+
+log() {
+	echo "$@"
+}
+
+cleanup() {
+	# TMP_TAR is set after mktemp; cleanup may run even if script fails early.
+	rm -f "${TMP_TAR:-}" 2>/dev/null || true
+}
+
+TMP_TAR="$(mktemp -t nginx-etc-XXXXXX.tar.gz)"
+trap cleanup EXIT
+
+mkdir -p "$(dirname "$DEST_DIR")"
+
+log "🧰 Архивируем конфиги nginx на сервере: ${HOST}..."
+ssh "${SSH_OPTS[@]}" "$HOST" "cd /etc/nginx && tar -czf - ." >"$TMP_TAR"
+
+log "📥 Распаковываем локально в: ${DEST_DIR}"
+rm -rf "$DEST_DIR"
+mkdir -p "$DEST_DIR"
+tar -xzf "$TMP_TAR" -C "$DEST_DIR"
+
+log "✅ Готово! Конфиги сохранены в: $DEST_DIR"

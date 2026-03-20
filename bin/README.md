@@ -61,6 +61,26 @@ bin/setup
 
 ---
 
+### 🔧 bin/nginx-conf-sync
+
+Downloads remote `/etc/nginx` configuration from a server via `ssh` and saves it locally into `./.nginx`.
+
+**Usage:**
+```bash
+bin/nginx-conf-sync
+```
+
+**Customize:**
+- `HOST` - SSH host (default: `example.com`)
+- `DEST_DIR` - Destination directory (default: `./.nginx`)
+
+Example:
+```bash
+HOST=example.com DEST_DIR=./.nginx bin/nginx-conf-sync
+```
+
+---
+
 ### 💻 bin/console
 
 Interactive Ruby console with pre-loaded application context.

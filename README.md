@@ -2,7 +2,7 @@
 
 Simple rack application for logging IP and useragent into PostgreSQL table with rate limiting and security features.
 
-**Version 2.1.0** | **Ruby 4.0.1** | **Bundler 4.0.6** | **Rack 3.2** | **PostgreSQL 17**
+**Version 2.2.2** | **Ruby 4.0.2** | **Bundler 4.0.6** | **Rack 3.2** | **PostgreSQL 17**
 
 ## Features
 
@@ -104,6 +104,7 @@ The `bin/` directory contains helpful scripts:
 | `bin/server` | Start the application server with automatic setup checks |
 | `bin/setup` | Initial project setup (install deps, create .env, check DB) |
 | `bin/console` | Interactive Ruby console with database access |
+| `bin/nginx-conf-sync` | Download remote `/etc/nginx` configs via SSH into `./.nginx` |
 | `bin/docker` | Docker Compose wrapper with useful commands |
 
 ### Examples

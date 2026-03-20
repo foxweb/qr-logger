@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Version is stored in the `VERSION` file at the root of the project.
 
+## [2.2.2] - 2026-03-20
+
+### 🔧 Updates
+- Ruby upgraded to 4.0.2
+
+### 📚 Documentation
+- Added `bin/nginx-conf-sync` to download remote `/etc/nginx` into `./.nginx`
+
 ## [2.2.1] - 2026-02-18
 
 ### 🐛 Fixes
