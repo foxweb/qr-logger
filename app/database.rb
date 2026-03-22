@@ -4,7 +4,8 @@ require 'sequel'
 
 # Database connection with error handling
 begin
-  DB = Sequel.connect(DB_URL)
+  # Small pool: single Puma thread + low-memory Postgres (see docker-compose db command).
+  DB = Sequel.connect(DB_URL, max_connections: Integer(ENV.fetch('DB_POOL_SIZE', 2)))
   DB.extension :pg_inet
   LOGGER.info "QR Logger v#{VERSION} - Database connected successfully to #{DB_URL.gsub(/:[^:@]+@/, ':***@')}"
 rescue Sequel::DatabaseConnectionError => e

@@ -6,12 +6,13 @@ services:
     tty: true
     build: .
     stdin_open: true
-    command: bundle exec rackup --host 0.0.0.0 -p 9292
+    command: bundle exec puma -C config/puma.rb config.ru
     ports:
       - 9292:9292
     volumes:
       - .:/app
     environment:
+      - PORT=9292
       - DATABASE_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
       - REDIRECT_URL=${REDIRECT_URL}
@@ -30,6 +31,37 @@ services:
     image: postgres:17
     restart: unless-stopped
     stop_grace_period: 3s
+    # Tuned for ~1 GB RAM / 1 vCPU and negligible traffic (see PostgreSQL docs for each knob).
+    command:
+      - postgres
+      - -c
+      - shared_buffers=32MB
+      - -c
+      - effective_cache_size=96MB
+      - -c
+      - max_connections=10
+      - -c
+      - superuser_reserved_connections=2
+      - -c
+      - work_mem=1MB
+      - -c
+      - maintenance_work_mem=32MB
+      - -c
+      - wal_buffers=4MB
+      - -c
+      - min_wal_size=32MB
+      - -c
+      - max_wal_size=64MB
+      - -c
+      - autovacuum_max_workers=1
+      - -c
+      - max_parallel_workers_per_gather=0
+      - -c
+      - max_parallel_workers=0
+      - -c
+      - max_parallel_maintenance_workers=0
+      - -c
+      - jit=off
     volumes:
       - pgdata:/var/lib/postgresql/data
     environment:
