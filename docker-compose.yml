@@ -3,8 +3,8 @@ volumes:
 
 services:
   app:
+    image: foxweb/qr-logger:latest
     tty: true
-    build: .
     stdin_open: true
     command: bundle exec puma -C config/puma.rb config.ru
     ports:
