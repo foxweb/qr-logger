@@ -3,6 +3,7 @@ volumes:
 
 services:
   app:
+    platform: linux/amd64
     image: foxweb/qr-logger:latest
     tty: true
     stdin_open: true
