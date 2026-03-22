@@ -28,7 +28,7 @@ services:
       start_period: 40s
 
   db:
-    image: postgres:17
+    image: postgres:17-alpine
     restart: unless-stopped
     stop_grace_period: 3s
     # Tuned for ~1 GB RAM / 1 vCPU and negligible traffic (see PostgreSQL docs for each knob).
