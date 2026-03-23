@@ -33,9 +33,23 @@
         font-size: clamp(1rem, 2.5vw, 1.25rem);
         background-color: #fff;
         color: #111;
+        box-sizing: border-box;
         margin: 1.25rem 2rem;
-        max-width: 40rem;
-        line-height: 1.55;
+        max-width: 25rem;
+        line-height: 1.5;
+    }
+    @media (max-width: 767.98px) {
+        body {
+            margin: 1.25rem 0;
+            padding: 0 2rem;
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+    @media (min-width: 768px) {
+        body {
+            margin: 1.25rem auto;
+        }
     }
     a {
         color: #0066cc;
