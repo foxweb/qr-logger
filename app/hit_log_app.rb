@@ -69,7 +69,7 @@ class HitLogApp
   def hit!(env)
     data = hit_from_env(env)
     ok = Database.log_hit(**data.slice(:ip, :user_agent, :referer, :host))
-    TelegramNotify.notify_hit(**data) if ok
+    TelegramNotify.notify_hit_async(**data) if ok
   end
 
   # Normalized hit fields from Rack env (for DB + Telegram).
