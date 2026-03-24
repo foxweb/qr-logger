@@ -48,6 +48,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     uri (1.1.1)
+    user_agent_parser (2.21.0)
 
 PLATFORMS
   aarch64-linux
@@ -68,6 +69,7 @@ DEPENDENCIES
   rack-attack
   rackup
   sequel
+  user_agent_parser
 
 CHECKSUMS
   activesupport (8.1.2) sha256=88842578ccd0d40f658289b0e8c842acfe9af751afee2e0744a7873f50b6fdae
@@ -98,6 +100,7 @@ CHECKSUMS
   sequel (5.101.0) sha256=d2ae3fd997a7c4572e8357918e777869faf90dc19310fcd6332747122aed2b29
   tzinfo (2.0.6) sha256=8daf828cc77bcf7d63b0e3bdb6caa47e2272dcfaf4fbfe46f8c3a9df087a829b
   uri (1.1.1) sha256=379fa58d27ffb1387eaada68c749d1426738bd0f654d812fcc07e7568f5c57c6
+  user_agent_parser (2.21.0) sha256=d945d914af9955a499a62038fe97d3ac3416b69e5243b3298c8755b48f3f57c7
 
 BUNDLED WITH
   4.0.6
