@@ -2,7 +2,7 @@
 
 Simple rack application for logging IP and useragent into PostgreSQL table with rate limiting and security features.
 
-**Version 2.2.2** | **Ruby 4.0.2** | **Bundler 4.0.6** | **Rack 3.2** | **PostgreSQL 17**
+**Version 2.3.0** | **Ruby 4.0.2** | **Bundler 4.0.6** | **Rack 3.2** | **PostgreSQL 17**
 
 ## Features
 
@@ -13,6 +13,8 @@ Simple rack application for logging IP and useragent into PostgreSQL table with 
 - 📝 Structured logging
 - 🐳 Docker support with healthchecks
 - ⚡ Error handling and recovery
+- 🔔 Telegram notifications for each hit event
+- 📱 User-Agent parsing (device / OS / browser summary)
 
 ## Quick start (Local)
 
@@ -78,6 +80,8 @@ See `.env.example` for all available configuration options:
 - `ALLOWED_HOSTS` - Comma-separated list of allowed hostnames
 - `REDIRECT_URL` - Default redirect destination
 - `LOG_LEVEL` - Logging level (DEBUG, INFO, WARN, ERROR)
+- `TELEGRAM_BOT_TOKEN` - Telegram bot token (optional)
+- `TELEGRAM_CHAT_ID` - Target chat ID for notifications (optional)
 
 ## Endpoints
 
@@ -85,6 +89,23 @@ See `.env.example` for all available configuration options:
 - `GET /y` or `GET /youtube` - Log hit and redirect
 - `GET /test` - Display user agent and IP (for testing)
 - `GET /health` - Health check (returns JSON with status)
+
+## Telegram Notifications
+
+When `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are set, each `GET /y` or `GET /youtube` hit sends a Telegram message with:
+
+- Request URL
+- Source IP (clickable `ipinfo.io` link)
+- Parsed User-Agent summary (device / OS / browser)
+- Raw User-Agent
+- Referer
+- Host
+
+Implementation notes:
+
+- Notification is sent asynchronously (background thread), so redirect response is not blocked by Telegram API latency.
+- If Telegram API fails, request flow is not interrupted (fail-open behavior, error is logged).
+- Message format uses Telegram HTML parse mode.
 
 ## Security Features
 
@@ -149,7 +170,7 @@ Health check endpoint returns:
 ```json
 {
   "status": "healthy",
-  "version": "2.1.0",
+  "version": "2.3.0",
   "database": "ok",
   "timestamp": "2026-02-17T..."
 }

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
+require_relative 'telegram_notify'
 
 # Main application class
 class HitLogApp
@@ -66,11 +67,29 @@ class HitLogApp
   end
 
   def hit!(env)
-    ip = request_ip(env)
-    user_agent = env['HTTP_USER_AGENT'] || 'Unknown'
-    referer = env['HTTP_REFERER'] || ''
-    host = env['HTTP_HOST']
+    data = hit_from_env(env)
+    ok = Database.log_hit(**data.slice(:ip, :user_agent, :referer, :host))
+    TelegramNotify.notify_hit_async(**data) if ok
+  end
 
-    Database.log_hit(ip: ip, user_agent: user_agent, referer: referer, host: host)
+  # Normalized hit fields from Rack env (for DB + Telegram).
+  def hit_from_env(env)
+    raw_user_agent = env['HTTP_USER_AGENT'] || 'Unknown'
+    raw_referer = env['HTTP_REFERER'] || ''
+
+    {
+      ip: request_ip(env),
+      user_agent: raw_user_agent.length > 500 ? raw_user_agent[0...500] : raw_user_agent,
+      referer: raw_referer.length > 500 ? raw_referer[0...500] : raw_referer,
+      host: env['HTTP_HOST'],
+      url: request_url(env)
+    }
+  end
+
+  def request_url(env)
+    host = env['HTTP_HOST'].to_s
+    path = "#{env['SCRIPT_NAME']}#{env['PATH_INFO']}"
+    qs = env['QUERY_STRING'].to_s
+    "https://#{host}#{qs.empty? ? path : "#{path}?#{qs}"}"
   end
 end
