@@ -126,8 +126,8 @@
         <p>Подпишись где удобно:</p>
         <nav aria-label="Социальные сети и каналы">
             <ul class="links">
-                <li><img class="icon" src="./images/telegram.svg" alt="" width="24" height="24" aria-hidden="true"><a class="link-tg" href="https://t.me/radiofoxweb" rel="noopener noreferrer" data-tg-domain="radiofoxweb" title="Канал в Telegram">t.me/radiofoxweb</a></li>
-                <li><img class="icon" src="./images/telegram.svg" alt="" width="24" height="24" aria-hidden="true"><a class="link-tg" href="https://t.me/kuznetzk" rel="noopener noreferrer" data-tg-domain="kuznetzk" title="Канал в Telegram">t.me/kuznetzk</a></li>
+                <li><img class="icon" src="./images/telegram.svg" alt="" width="24" height="24" aria-hidden="true"><a class="link-tg" href="tg://resolve?domain=radiofoxweb" rel="noopener noreferrer" data-tg-domain="radiofoxweb" title="Канал в Telegram">t.me/radiofoxweb</a></li>
+                <li><img class="icon" src="./images/telegram.svg" alt="" width="24" height="24" aria-hidden="true"><a class="link-tg" href="tg://resolve?domain=kuznetzk" rel="noopener noreferrer" data-tg-domain="kuznetzk" title="Канал в Telegram">t.me/kuznetzk</a></li>
                 <li><img class="icon" src="./images/vk.svg" alt="VK" width="24" height="24" aria-hidden="true"><a href="https://vk.com/kuzved" target="_blank" rel="noopener noreferrer">vk.com/kuzved</a></li>
                 <li><img class="icon" src="./images/vkvideo.svg" alt="VK Видео" width="24" height="24" aria-hidden="true"><a href="https://vkvideo.ru/@kuzved" target="_blank" rel="noopener noreferrer">vkvideo.ru/@kuzved</a></li>
                 <li><img class="icon" src="./images/ok.svg" alt="Одноклассники" width="24" height="24" aria-hidden="true"><a href="https://ok.ru/video/c27168920" target="_blank" rel="noopener noreferrer">ok.ru</a></li>
@@ -137,44 +137,8 @@
     </main>
 
     <footer>
-        <small>© <time datetime="2025">2025</time> <a href="https://kurepin.com/">Алексей Курепин</a></small>
+        <small>© <time datetime="2026">2026</time> <a href="https://kurepin.com/">Алексей Курепин</a></small>
     </footer>
-
-    <script>
-    (function () {
-        function openTelegramDeepLink(a, fallbackUrl) {
-            var domain = a.getAttribute('data-tg-domain');
-            if (!domain) return false;
-            var tg = 'tg://resolve?domain=' + encodeURIComponent(domain);
-            var left = false;
-            function markLeft() { left = true; }
-            function onVis() {
-                if (document.hidden) markLeft();
-            }
-            window.addEventListener('blur', markLeft);
-            window.addEventListener('pagehide', markLeft);
-            document.addEventListener('visibilitychange', onVis);
-            window.location.href = tg;
-            setTimeout(function () {
-                window.removeEventListener('blur', markLeft);
-                window.removeEventListener('pagehide', markLeft);
-                document.removeEventListener('visibilitychange', onVis);
-                if (!left) {
-                    window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
-                }
-            }, 1300);
-            return true;
-        }
-        document.querySelectorAll('a.link-tg[data-tg-domain]').forEach(function (a) {
-            a.addEventListener('click', function (e) {
-                if (e.defaultPrevented) return;
-                if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-                e.preventDefault();
-                openTelegramDeepLink(a, a.getAttribute('href'));
-            });
-        });
-    })();
-    </script>
 
     <!-- Yandex.Metrika -->
     <script>
